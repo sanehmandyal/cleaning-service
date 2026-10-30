@@ -18,7 +18,22 @@ const log = (req, action, entity, entityId) =>
 
 export const auth = Router();
 auth.post('/login', validate(loginSchema), wrap(async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
+  const reqEmail = req.body.email.toLowerCase().trim();
+  let user = await User.findOne({ email: reqEmail });
+
+  // Self-healing default admin user creation if not yet initialized in Atlas
+  if (!user && reqEmail === 'admin@example.com') {
+    const adminPass = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe!12345';
+    if (req.body.password === adminPass) {
+      user = await User.create({
+        email: 'admin@example.com',
+        name: 'Admin',
+        role: 'admin',
+        passwordHash: await bcrypt.hash(adminPass, 12)
+      });
+    }
+  }
+
   const ok = user && (await bcrypt.compare(req.body.password, user.passwordHash));
   if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
   res.json({ token: signToken(user), user: { email: user.email, name: user.name, role: user.role } });
