@@ -1,4 +1,24 @@
 // Client fallback data to guarantee 100% display even during server cold starts
+const defaultSettings = {
+  businessName: 'SparkleClean Pro',
+  tagline: 'Premium Residential & Commercial Cleaning Services',
+  phone: '+1 (800) 555-0199',
+  whatsapp: '+18005550199',
+  email: 'contact@sparklecleanpro.com',
+  addressLine: 'Greater Metropolitan Area & Surrounding Suburbs',
+  openingHours: 'Mon - Sat: 7:30 AM - 7:00 PM | Sun: 9:00 AM - 4:00 PM',
+  logo: '/images/logo.svg',
+  defaultOgImage: '/images/hero-home.jpg',
+  homeMetaTitle: 'SparkleClean Pro | Trusted Home & Commercial Cleaning Services',
+  homeMetaDescription: 'Top-rated, bonded & insured cleaning professionals. Residential, deep cleaning, move-in/out, and commercial cleaning with our 100% satisfaction guarantee.',
+  social: {
+    facebook: 'https://facebook.com',
+    instagram: 'https://instagram.com',
+    linkedin: 'https://linkedin.com',
+    googleBusiness: 'https://maps.google.com'
+  }
+};
+
 const servicesData = [
   {
     slug: 'home-cleaning',
@@ -350,4 +370,4 @@ const blogData = [
 ];
 
 
-export { servicesData, areasData, blogData };
+export { defaultSettings, servicesData, areasData, blogData };

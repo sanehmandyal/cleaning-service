@@ -1,7 +1,8 @@
 import { useState, createContext, useContext } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { Menu, X, Phone, MessageCircle, Sparkles } from 'lucide-react';
+import { Menu, X, Phone, MessageCircle, Sparkles, MapPin, Mail, Clock, ShieldCheck } from 'lucide-react';
 import { useApi } from '../hooks.js';
+import { defaultSettings } from '../data.js';
 
 const SettingsCtx = createContext({});
 export const useSettings = () => useContext(SettingsCtx);
@@ -21,7 +22,11 @@ const waLink = (n) => `https://wa.me/${String(n).replace(/\D/g, '')}`;
 export default function Layout() {
   const { data: s } = useApi('/public/settings');
   const [open, setOpen] = useState(false);
-  const st = s || {};
+  // Merge API settings with production-grade defaultSettings so no placeholder or blank state appears
+  const st = {
+    ...defaultSettings,
+    ...(s && s.businessName && !s.businessName.includes('placeholder') ? s : {})
+  };
   const track = (name) => window.gtag?.('event', name);
   return (
     <SettingsCtx.Provider value={st}>
@@ -69,14 +74,19 @@ export default function Layout() {
       <main id="main"><Outlet /></main>
 
       <footer className="bg-navy-900 text-slate-300">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <p className="text-lg font-bold text-white">{st.businessName}</p>
-            <p className="mt-2 text-sm">{st.tagline}</p>
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-14 sm:px-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <img src={st.logo || '/images/logo.svg'} alt={st.businessName} className="h-9 w-auto brightness-0 invert" />
+            </div>
+            <p className="text-sm text-slate-400 leading-relaxed">{st.tagline}</p>
+            <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full w-fit">
+              <ShieldCheck size={14} /> Licensed, Bonded & Insured
+            </div>
           </div>
           <div>
-            <p className="font-semibold text-white">Company</p>
-            <ul className="mt-3 space-y-2 text-sm">
+            <p className="font-semibold text-white tracking-wide uppercase text-xs">Company</p>
+            <ul className="mt-4 space-y-2.5 text-sm">
               {[
                 ['/about', 'About Us'],
                 ['/why-choose-us', 'Why Choose Us & Guarantee'],
@@ -93,27 +103,53 @@ export default function Layout() {
             </ul>
           </div>
           <div>
-            <p className="font-semibold text-white">Get started</p>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li><Link className="hover:text-white" to="/services">All services</Link></li>
-              <li><Link className="hover:text-white" to="/service-areas">Service areas</Link></li>
-              <li><Link className="hover:text-white" to="/book-cleaning">Book a cleaning</Link></li>
-              <li><Link className="hover:text-white" to="/get-a-quote">Get a free quote</Link></li>
+            <p className="font-semibold text-white tracking-wide uppercase text-xs">Services & Areas</p>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              <li><Link className="hover:text-white transition-colors" to="/services">All Cleaning Services</Link></li>
+              <li><Link className="hover:text-white transition-colors" to="/service-areas">Service Areas We Cover</Link></li>
+              <li><Link className="hover:text-white transition-colors" to="/book-cleaning">Book a Cleaning Online</Link></li>
+              <li><Link className="hover:text-white transition-colors" to="/get-a-quote">Request a Free Quote</Link></li>
             </ul>
           </div>
-          <div className="text-sm">
-            <p className="font-semibold text-white">Contact</p>
-            <ul className="mt-3 space-y-2">
-              {st.phone && <li><a className="hover:text-white" href={`tel:${st.phone}`}>{st.phone}</a></li>}
-              {st.email && <li><a className="hover:text-white break-all" href={`mailto:${st.email}`}>{st.email}</a></li>}
-              {st.addressLine && <li>{st.addressLine}</li>}
-              {st.openingHours && <li>{st.openingHours}</li>}
-              {!st.phone && !st.email && <li className="text-slate-400">Contact details are set in the admin panel.</li>}
+          <div>
+            <p className="font-semibold text-white tracking-wide uppercase text-xs">Contact & Hours</p>
+            <ul className="mt-4 space-y-3 text-sm">
+              {st.phone && (
+                <li className="flex items-center gap-2.5">
+                  <Phone size={15} className="text-brand shrink-0" />
+                  <a className="hover:text-white font-medium" href={`tel:${st.phone}`}>{st.phone}</a>
+                </li>
+              )}
+              {st.email && (
+                <li className="flex items-center gap-2.5">
+                  <Mail size={15} className="text-brand shrink-0" />
+                  <a className="hover:text-white break-all" href={`mailto:${st.email}`}>{st.email}</a>
+                </li>
+              )}
+              {st.addressLine && (
+                <li className="flex items-start gap-2.5">
+                  <MapPin size={15} className="text-brand shrink-0 mt-0.5" />
+                  <span className="text-slate-400">{st.addressLine}</span>
+                </li>
+              )}
+              {st.openingHours && (
+                <li className="flex items-start gap-2.5">
+                  <Clock size={15} className="text-brand shrink-0 mt-0.5" />
+                  <span className="text-slate-400">{st.openingHours}</span>
+                </li>
+              )}
             </ul>
           </div>
         </div>
-        <div className="border-t border-white/10 px-4 py-4 text-center text-xs sm:px-6">
-          © {new Date().getFullYear()} {st.businessName} · <Link to="/privacy-policy" className="hover:text-white">Privacy</Link> · <Link to="/terms-and-conditions" className="hover:text-white">Terms</Link> · <Link to="/admin" className="hover:text-white">Admin</Link>
+        <div className="border-t border-white/10 px-4 py-6 text-center text-xs text-slate-400 sm:px-6 flex flex-col sm:flex-row items-center justify-between max-w-6xl mx-auto gap-3">
+          <span>© {new Date().getFullYear()} {st.businessName}. All rights reserved.</span>
+          <div className="flex items-center gap-4">
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <span>·</span>
+            <Link to="/terms-and-conditions" className="hover:text-white transition-colors">Terms of Service</Link>
+            <span>·</span>
+            <Link to="/admin" className="hover:text-white transition-colors">Admin</Link>
+          </div>
         </div>
       </footer>
 
