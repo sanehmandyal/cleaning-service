@@ -104,20 +104,20 @@ export const GalleryItem = model('GalleryItem', new Schema({
 
 export const SiteSettings = model('SiteSettings', new Schema({
   key: { type: String, default: 'main', unique: true },
-  businessName: { type: String, default: 'Your Cleaning Co. (placeholder)' },
-  tagline: { type: String, default: 'Professional cleaning for homes and businesses' },
-  phone: { type: String, default: '' },
-  whatsapp: { type: String, default: '' },
-  email: { type: String, default: '' },
-  addressLine: { type: String, default: '' }, // leave blank for service-area businesses
-  openingHours: { type: String, default: '' },
+  businessName: { type: String, default: 'SparkleClean Pro' },
+  tagline: { type: String, default: 'Premium Residential & Commercial Cleaning Services' },
+  phone: { type: String, default: '+1 (800) 555-0199' },
+  whatsapp: { type: String, default: '+18005550199' },
+  email: { type: String, default: 'contact@sparklecleanpro.com' },
+  addressLine: { type: String, default: 'Greater Metropolitan Area & Surrounding Suburbs' }, // service-area business
+  openingHours: { type: String, default: 'Mon - Sat: 7:30 AM - 7:00 PM | Sun: 9:00 AM - 4:00 PM' },
   mapEmbedUrl: { type: String, default: '' },
-  logo: { type: String, default: '' },
+  logo: { type: String, default: '/images/logo.svg' },
   social: { facebook: String, instagram: String, googleBusiness: String, linkedin: String },
   analytics: { ga4Id: String, gscVerification: String },
-  defaultOgImage: String,
-  homeMetaTitle: String,
-  homeMetaDescription: String,
+  defaultOgImage: { type: String, default: '/images/hero-home.jpg' },
+  homeMetaTitle: { type: String, default: 'SparkleClean Pro | Trusted Home & Commercial Cleaning Services' },
+  homeMetaDescription: { type: String, default: 'Top-rated, bonded & insured cleaning professionals. Residential, deep cleaning, move-in/out, and commercial cleaning with our 100% satisfaction guarantee.' },
 }, opts));
 
 export const BacklinkProspect = model('BacklinkProspect', new Schema({
