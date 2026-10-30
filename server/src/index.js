@@ -36,7 +36,19 @@ app.use(helmet({
 app.use(compression());
 
 const origins = (process.env.CORS_ORIGINS || '').split(',').map((s) => s.trim()).filter(Boolean);
-app.use('/api', cors({ origin: (o, cb) => cb(null, !o || origins.includes(o)) }));
+app.use(cors({
+  origin: (o, cb) => {
+    if (!o) return cb(null, true);
+    // Allow vercel preview and production subdomains, localhost, or any configured origin
+    if (origins.includes(o) || origins.length === 0 || o.includes('vercel.app') || o.includes('localhost') || o.includes('127.0.0.1')) {
+      return cb(null, true);
+    }
+    return cb(null, false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 app.use(express.json({ limit: '1mb' }));
 app.use(mongoSanitize());
 
