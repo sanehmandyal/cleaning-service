@@ -1,5 +1,14 @@
 import axios from 'axios';
-export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || '/api' });
+
+const resolveBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+    return 'https://cleaning-service-api-29vb.onrender.com/api';
+  }
+  return '/api';
+};
+
+export const api = axios.create({ baseURL: resolveBaseUrl() });
 export const getToken = () => { try { return sessionStorage.getItem('adm_token'); } catch { return null; } };
 export const setToken = (t) => { try { t ? sessionStorage.setItem('adm_token', t) : sessionStorage.removeItem('adm_token'); } catch { /* ignore */ } };
 api.interceptors.request.use((c) => { const t = getToken(); if (t && c.url.startsWith('/admin')) c.headers.Authorization = `Bearer ${t}`; return c; });
