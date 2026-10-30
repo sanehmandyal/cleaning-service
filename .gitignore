@@ -1,0 +1,95 @@
+
+# ==================================
+# NODE MODULES
+# ==================================
+node_modules/
+**/node_modules/
+
+# ==================================
+# ENVIRONMENT VARIABLES (IMPORTANT)
+# ==================================
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# ==================================
+# BUILD FILES
+# ==================================
+dist/
+build/
+**/dist/
+**/build/
+
+# ==================================
+# LOG FILES
+# ==================================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ==================================
+# CACHE FILES
+# ==================================
+.cache/
+.parcel-cache/
+.vite/
+.turbo/
+.eslintcache/
+.npm/
+.yarn/cache/
+
+# ==================================
+# TEST AND COVERAGE
+# ==================================
+coverage/
+.nyc_output/
+
+# ==================================
+# SYSTEM FILES
+# ==================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==================================
+# EDITOR FILES
+# ==================================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.user
+*.sln
+*.swp
+
+# ==================================
+# TEMPORARY FILES
+# ==================================
+tmp/
+temp/
+*.tmp
+*.bak
+*.old
+
+# ==================================
+# DATABASE AND BACKUPS
+# ==================================
+*.sqlite
+*.sqlite3
+*.db
+*.wt
+*.dump
+*.backup
+backups/
+data/
+**/data/
+db/
+
+
+# ==================================
+# OPTIONAL GENERATED FILES
+# ==================================
+*.tsbuildinfo

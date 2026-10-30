@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" width="240" height="60">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d6fe0" />
+      <stop offset="100%" stop-color="#0a1f44" />
+    </linearGradient>
+  </defs>
+  <!-- Sparkle Badge -->
+  <rect x="6" y="8" width="44" height="44" rx="12" fill="url(#logoGrad)" />
+  <!-- Sparkle Stars -->
+  <path d="M28 14 L30.5 24 L40.5 26.5 L30.5 29 L28 39 L25.5 29 L15.5 26.5 L25.5 24 Z" fill="#ffffff" />
+  <circle cx="36" cy="18" r="2.5" fill="#facc15" />
+  <circle cx="20" cy="35" r="2" fill="#60a5fa" />
+  <!-- Text Brand -->
+  <text x="58" y="32" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="900" font-size="20" fill="#0a1f44" letter-spacing="-0.5">SparkleClean</text>
+  <text x="186" y="32" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="900" font-size="20" fill="#1d6fe0" letter-spacing="-0.5">Pro</text>
+  <text x="59" y="46" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="600" font-size="9" fill="#64748b" letter-spacing="1.5">CLEANING SERVICES</text>
+</svg>
