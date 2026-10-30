@@ -9,11 +9,8 @@ export const useSettings = () => useContext(SettingsCtx);
 const nav = [
   ['/', 'Home'],
   ['/services', 'Services'],
-  ['/pricing', 'Pricing'],
   ['/why-choose-us', 'Why Us'],
   ['/service-areas', 'Areas'],
-  ['/gallery', 'Gallery'],
-  ['/reviews', 'Reviews'],
   ['/blog', 'Blog'],
   ['/about', 'About'],
   ['/contact', 'Contact'],
@@ -83,9 +80,6 @@ export default function Layout() {
               {[
                 ['/about', 'About Us'],
                 ['/why-choose-us', 'Why Choose Us & Guarantee'],
-                ['/pricing', 'Pricing & Rates'],
-                ['/reviews', 'Customer Reviews'],
-                ['/gallery', 'Project Gallery'],
                 ['/faqs', 'FAQs'],
                 ['/blog', 'Cleaning Blog'],
                 ['/contact', 'Contact Us'],

@@ -1655,12 +1655,6 @@ export function Home() {
         </div>
       </section>
 
-      {/* SECTION 1: Interactive Cost Calculator */}
-      <InteractivePriceCalculator />
-
-      {/* Transparent Pricing Packages & Frequency Discounts */}
-      <HomePricingPackages />
-
       {/* SECTION 2: Real Transformations (Before & After Showcase) */}
       <BeforeAfterShowcase />
 
@@ -1679,80 +1673,8 @@ export function Home() {
       {/* Integrated Admin & Operations Control Center */}
       <AdminPanelSection />
 
-      {/* Recent Projects Showcase */}
-      {gallery?.length > 0 && (
-        <section className="bg-slate-50 py-16">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
-              <div>
-                <span className="text-brand font-semibold text-sm tracking-wide uppercase">Real Results</span>
-                <h2 className="text-3xl sm:text-4xl mt-1">Our Recent Projects</h2>
-                <p className="mt-2 text-slate-600">Browse real photos of kitchens, bathrooms, and commercial spaces we clean.</p>
-              </div>
-              <Link to="/gallery" className="btn btn-ghost whitespace-nowrap self-start sm:self-auto font-semibold">
-                Explore Full Gallery →
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-              {gallery.slice(0, 6).map((g) => (
-                <div key={g._id} className="group relative overflow-hidden rounded-2xl bg-white shadow-sm aspect-[4/3]">
-                  <img
-                    src={g.image}
-                    alt={g.alt}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  {g.caption && (
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-900/90 via-navy-900/40 to-transparent p-4 text-white">
-                      <p className="text-xs sm:text-sm font-medium line-clamp-1">{g.caption}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* SECTION 6: Commercial & Office Specialization Hub */}
       <CommercialOfficeFocus />
-
-      {/* Customer Reviews */}
-      {reviews?.length > 0 && (
-        <section className="section">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-brand font-semibold text-sm tracking-wide uppercase">Client Experiences</span>
-            <h2 className="text-3xl sm:text-4xl mt-1">Feedback From Real Clients</h2>
-            <p className="mt-2 text-slate-600 text-sm">Genuine reviews published with explicit client permission.</p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {reviews.slice(0, 3).map((r) => (
-              <figure key={r._id} className="card flex flex-col justify-between">
-                <div>
-                  <StarRating rating={5} size={16} />
-                  <blockquote className="mt-4 text-sm text-slate-700 leading-relaxed italic">
-                    “{r.text}”
-                  </blockquote>
-                </div>
-                <figcaption className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-navy-900 text-sm">{r.name}</p>
-                    {r.location && <p className="text-xs text-slate-500">{r.location}</p>}
-                  </div>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                    <CheckCircle2 size={12} /> Verified Client
-                  </span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-          <div className="mt-8 text-center">
-            <Link to="/reviews" className="btn btn-ghost font-semibold">
-              Read More Verified Reviews →
-            </Link>
-          </div>
-        </section>
-      )}
 
       {/* Latest Cleaning Guides & Blog Articles */}
       <RecentBlogSection blogs={blogs} />
