@@ -4,11 +4,29 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 import mongoose from 'mongoose';
-import { Service, ServiceArea, BlogPost, SiteSettings, Testimonial, GalleryItem } from './models/index.js';
+import bcrypt from 'bcryptjs';
+import { User, Service, ServiceArea, BlogPost, SiteSettings, Testimonial, GalleryItem } from './models/index.js';
 
 await mongoose.connect(process.env.MONGODB_URI);
 
-console.log('Updating database with original local image assets...');
+console.log('Updating database with full site content and admin credentials...');
+
+// 0. Seed Admin user
+const adminEmail = (process.env.SEED_ADMIN_EMAIL || 'admin@example.com').toLowerCase();
+const adminPass = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe!12345';
+await User.updateOne(
+  { email: adminEmail },
+  {
+    $set: {
+      email: adminEmail,
+      name: 'Admin',
+      role: 'admin',
+      passwordHash: await bcrypt.hash(adminPass, 12)
+    }
+  },
+  { upsert: true }
+);
+console.log(`Admin user ensured: ${adminEmail}`);
 
 // 1. Site Settings
 await SiteSettings.updateOne(
@@ -67,7 +85,7 @@ const servicesData = [
       '100% satisfaction walkthrough'
     ],
     safetyNotes: 'We use non-toxic, biodegradable green products with zero harsh fumes. All staff are bonded, insured, and background-checked.',
-    priceNote: 'Starting from $99 for 1-bedroom homes. Save up to 20% on recurring plans.',
+    priceNote: 'Transparent pricing based on property size, frequency, and custom requirements. Free custom quote.',
     faqs: [
       { q: 'Do I need to be home during the cleaning?', a: 'No, most clients provide a key, lockbox code, or concierge permission. Our bonded cleaners are fully vetted.' },
       { q: 'Do you bring your own cleaning supplies and equipment?', a: 'Yes! We arrive with professional-grade HEPA vacuums, microfiber mop systems, and eco-friendly cleaning solutions.' }
@@ -103,7 +121,7 @@ const servicesData = [
       'Quality checklist review and sign-off'
     ],
     safetyNotes: 'Our technicians use specialized steam and eco-friendly descalers that are tough on grime without damaging delicate stone or finishes.',
-    priceNote: 'Starting from $189 based on square footage and property condition.',
+    priceNote: 'Tailored quotation based on square footage, room count, and current condition.',
     faqs: [
       { q: 'How long does a deep clean take?', a: 'Typically 3.5 to 6 hours depending on property size and condition. We assign a 2-to-3 person team.' },
       { q: 'Can you clean inside the oven and refrigerator?', a: 'Yes! Interior oven and refrigerator detailing can be added to any deep cleaning session.' }
@@ -139,7 +157,7 @@ const servicesData = [
       'Complimentary re-clean within 24 hours if landlord has notes'
     ],
     safetyNotes: 'Fully compliant with tenancy deposit dispute resolution criteria.',
-    priceNote: 'Starting from $249 for standard 1-2 bedroom apartments.',
+    priceNote: 'Comprehensive quote confirmed in advance with our move-out guarantee.',
     faqs: [
       { q: 'Does the electricity and water need to be turned on?', a: 'Yes, running hot water and electricity are required for our cleaning machines and sanitization tools.' },
       { q: 'What happens if my landlord notices an issue during inspection?', a: 'We offer a 24-hour guarantee. We will return and address any inspection items at no extra cost.' }
@@ -175,7 +193,7 @@ const servicesData = [
       'Monthly quality audits and communication log'
     ],
     safetyNotes: 'All staff pass criminal background checks and sign strict confidentiality and NDA agreements.',
-    priceNote: 'Custom plans from $149/visit with monthly billing and itemized invoicing.',
+    priceNote: 'Flexible commercial schedules with itemized billing and custom service agreements.',
     faqs: [
       { q: 'Can you clean after business hours?', a: 'Yes! Most commercial clients prefer evening or weekend cleanings so regular work is never interrupted.' },
       { q: 'Are you insured for commercial properties?', a: 'Yes, we carry comprehensive commercial general liability and workers compensation insurance.' }
@@ -210,7 +228,7 @@ const servicesData = [
       'Quick-dry inspection (typically dry in 4-6 hours)'
     ],
     safetyNotes: 'Non-toxic, WoolSafe approved products safe for pets and children immediately after drying.',
-    priceNote: 'Starting at $69 per room or $119 for standard sectional sofas.',
+    priceNote: 'Custom steam extraction quotation based on fabric type and surface area.',
     faqs: [
       { q: 'How long do carpets take to dry?', a: 'With our high-velocity extraction, carpets typically dry within 4 to 6 hours depending on room ventilation.' },
       { q: 'Can you remove pet stains and odors?', a: 'Yes, we use enzymatic treatments that break down urine salts and bacteria at the molecular level.' }
@@ -245,7 +263,7 @@ const servicesData = [
       'Track and sill wipe-down'
     ],
     safetyNotes: 'Strict adherence to ladder safety and OSHA fall protection standards. Purified water fed-pole systems up to 3 stories.',
-    priceNote: 'Starting at $6 to $10 per standard window pane.',
+    priceNote: 'Quoted based on window count, accessibility, and glass surface area.',
     faqs: [
       { q: 'Do you clean window tracks and screens?', a: 'Yes, track wiping and screen dusting are included in our complete window care package.' },
       { q: 'Will rain immediately ruin freshly cleaned windows?', a: 'Pure rain water alone does not make windows dirty; dirt and airborne dust already on the glass do. Clean windows dry spot-free even after rain!' }
