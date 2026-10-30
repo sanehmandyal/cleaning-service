@@ -39,6 +39,7 @@ import {
 import { useApi, usePageMeta } from '../hooks.js';
 import { useSettings } from '../components/Layout.jsx';
 import { Loading, Missing, Breadcrumbs, Faqs, Checklist, Paragraphs, Img, EnquiryForm, StarRating } from '../components/Shared.jsx';
+import { servicesData, areasData, blogData } from '../data.js';
 
 export const Hero = ({ h1, sub, badge, children }) => (
   <section className="relative overflow-hidden bg-gradient-to-br from-navy-900 via-navy-800 to-brand text-white py-14 sm:py-20">
@@ -1576,11 +1577,16 @@ export const ServiceCard = ({ s }) => (
 
 export function Home() {
   const st = useSettings();
-  const { data: services } = useApi('/public/services');
-  const { data: areas } = useApi('/public/areas');
+  const { data: servicesDataApi } = useApi('/public/services');
+  const { data: areasDataApi } = useApi('/public/areas');
   const { data: reviews } = useApi('/public/testimonials');
   const { data: gallery } = useApi('/public/gallery');
-  const { data: blogs } = useApi('/public/blog');
+  const { data: blogsDataApi } = useApi('/public/blog');
+
+  const services = (servicesDataApi && servicesDataApi.length > 0) ? servicesDataApi : servicesData;
+  const areas = (areasDataApi && areasDataApi.length > 0) ? areasDataApi : areasData;
+  const blogs = (blogsDataApi && blogsDataApi.length > 0) ? blogsDataApi : blogData;
+
   usePageMeta(st.homeMetaTitle || `${st.businessName || 'SparkleClean Pro'} | ${st.tagline || ''}`, st.homeMetaDescription || st.tagline);
 
   return (
@@ -2270,7 +2276,8 @@ export function Services() {
   const [cat, setCat] = useState('all');
   usePageMeta('Cleaning Services | Residential, Commercial & Specialist', 'Browse all professional cleaning services offered by SparkleClean Pro.');
 
-  const filtered = (data || []).filter((s) => (cat === 'all' ? true : s.category === cat));
+  const servicesList = (data && data.length > 0) ? data : servicesData;
+  const filtered = servicesList.filter((s) => (cat === 'all' ? true : s.category === cat));
 
   return (
     <>
@@ -2295,7 +2302,7 @@ export function Services() {
           ))}
         </div>
 
-        {loading ? (
+        {loading && !data ? (
           <Loading />
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -2311,13 +2318,18 @@ export function Services() {
 
 export function ServiceDetail() {
   const { slug } = useParams();
-  const { data: s, loading, error } = useApi(`/public/services/${slug}`);
-  const { data: all } = useApi('/public/services');
-  const { data: areas } = useApi('/public/areas');
+  const { data: apiService, loading } = useApi(`/public/services/${slug}`);
+  const { data: allApi } = useApi('/public/services');
+  const { data: areasApi } = useApi('/public/areas');
+
+  const s = apiService || servicesData.find((x) => x.slug === slug);
+  const all = (allApi && allApi.length > 0) ? allApi : servicesData;
+  const areas = (areasApi && areasApi.length > 0) ? areasApi : areasData;
+
   usePageMeta(s?.metaTitle || (s && s.name), s?.metaDescription || s?.summary);
 
-  if (loading) return <Loading />;
-  if (error === 'notfound' || !s) return <Missing />;
+  if (loading && !s) return <Loading />;
+  if (!s) return <Missing />;
   const related = (all || []).filter((x) => s.relatedServices?.includes(x.slug));
   const rareas = (areas || []).filter((a) => s.areas?.includes(a.slug) || a.services?.includes(s.slug));
 
@@ -2457,6 +2469,7 @@ export function ServiceDetail() {
 // -------------------------------------------------------------
 export function Areas() {
   const { data, loading } = useApi('/public/areas');
+  const areasList = (data && data.length > 0) ? data : areasData;
   usePageMeta('Service Areas | SparkleClean Pro', 'View the metropolitan areas and suburban neighborhoods where we provide cleaning services.');
 
   return (
@@ -2503,13 +2516,16 @@ export function Areas() {
 
 export function AreaDetail() {
   const { slug } = useParams();
-  const { data: a, loading, error } = useApi(`/public/areas/${slug}`);
-  const { data: svcs } = useApi('/public/services');
-  const { data: areas } = useApi('/public/areas');
+  const { data: aApi, loading } = useApi(`/public/areas/${slug}`);
+  const { data: svcsApi } = useApi('/public/services');
+  const { data: areasApi } = useApi('/public/areas');
+  const a = aApi || areasData.find((x) => x.slug === slug);
+  const svcs = (svcsApi && svcsApi.length > 0) ? svcsApi : servicesData;
+  const areas = (areasApi && areasApi.length > 0) ? areasApi : areasData;
   usePageMeta(a?.metaTitle || (a && `Cleaning Services in ${a.name}`), a?.metaDescription || a?.intro);
 
-  if (loading) return <Loading />;
-  if (error === 'notfound' || !a) return <Missing />;
+  if (loading && !a) return <Loading />;
+  if (!a) return <Missing />;
   const here = (svcs || []).filter((s) => a.services?.includes(s.slug));
   const near = (areas || []).filter((x) => a.nearbyAreas?.includes(x.slug));
 
@@ -2742,6 +2758,7 @@ export function Reviews() {
 // -------------------------------------------------------------
 export function Blog() {
   const { data, loading } = useApi('/public/blog');
+  const blogList = (data && data.length > 0) ? data : blogData;
   usePageMeta('Cleaning Tips, Checklists & Guides | SparkleClean Pro', 'Expert advice on deep cleaning, move-out inspections, stain removal, and eco-friendly home care.');
 
   return (
@@ -2756,7 +2773,7 @@ export function Blog() {
           <Loading />
         ) : (
           <div className="grid gap-8 md:grid-cols-2">
-            {(data || []).map((p) => (
+            {blogList.map((p) => (
               <Link
                 key={p.slug}
                 to={`/blog/${p.slug}`}
@@ -2791,12 +2808,14 @@ export function Blog() {
 
 export function BlogPost() {
   const { slug } = useParams();
-  const { data: p, loading, error } = useApi(`/public/blog/${slug}`);
-  const { data: svcs } = useApi('/public/services');
+  const { data: pApi, loading } = useApi(`/public/blog/${slug}`);
+  const { data: svcsApi } = useApi('/public/services');
+  const p = pApi || blogData.find((x) => x.slug === slug);
+  const svcs = (svcsApi && svcsApi.length > 0) ? svcsApi : servicesData;
   usePageMeta(p?.metaTitle || p?.title, p?.metaDescription || p?.excerpt);
 
-  if (loading) return <Loading />;
-  if (error === 'notfound' || !p) return <Missing />;
+  if (loading && !p) return <Loading />;
+  if (!p) return <Missing />;
   const rel = (svcs || []).filter((s) => p.relatedServices?.includes(s.slug));
 
   return (
