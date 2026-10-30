@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link, NavLink, Outlet, useNavigate, Navigate } from 'react-router-dom';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { api, getToken, setToken } from '../api.js';
 
 const csv = (v) => (Array.isArray(v) ? v.join(', ') : v || '');
@@ -53,19 +54,88 @@ const RES = {
 export function Login() {
   const nav = useNavigate();
   const [f, setF] = useState({ email: '', password: '' });
+  const [showPass, setShowPass] = useState(false);
   const [err, setErr] = useState('');
+  const [loading, setLoading] = useState(false);
+
   async function go(e) {
     e.preventDefault();
-    try { const r = await api.post('/auth/login', f); setToken(r.data.token); nav('/admin'); } catch { setErr('Invalid email or password'); }
+    setErr('');
+    setLoading(true);
+    try {
+      const r = await api.post('/auth/login', f);
+      setToken(r.data.token);
+      nav('/admin');
+    } catch (error) {
+      setErr(error.response?.data?.error || 'Invalid email or password');
+    } finally {
+      setLoading(false);
+    }
   }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-brand-50 p-4">
-      <form onSubmit={go} className="card w-full max-w-sm space-y-4">
-        <h1 className="text-2xl">Admin sign in</h1>
-        <label className="block text-sm font-medium">Email<input className="input mt-1" type="email" autoComplete="username" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} required /></label>
-        <label className="block text-sm font-medium">Password<input className="input mt-1" type="password" autoComplete="current-password" value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} required /></label>
-        {err && <p role="alert" className="text-sm text-red-600">{err}</p>}
-        <button className="btn btn-primary w-full">Sign in</button>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-brand-50 p-4">
+      <div className="w-full max-w-sm mb-4">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-brand transition-colors bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm"
+        >
+          <ArrowLeft size={14} /> Back to Website
+        </Link>
+      </div>
+
+      <form onSubmit={go} className="card w-full max-w-sm space-y-4 shadow-xl border border-slate-200">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-black text-navy-900">Admin sign in</h1>
+          <p className="text-xs text-slate-500">Sign in to access your operations dashboard</p>
+        </div>
+
+        <label className="block text-sm font-medium text-slate-700">
+          Email
+          <input
+            className="input mt-1 w-full"
+            type="email"
+            autoComplete="username"
+            value={f.email}
+            onChange={(e) => setF({ ...f, email: e.target.value })}
+            placeholder="admin@example.com"
+            required
+          />
+        </label>
+
+        <label className="block text-sm font-medium text-slate-700">
+          Password
+          <div className="relative mt-1">
+            <input
+              className="input w-full pr-10"
+              type={showPass ? 'text' : 'password'}
+              autoComplete="current-password"
+              value={f.password}
+              onChange={(e) => setF({ ...f, password: e.target.value })}
+              placeholder="••••••••••••"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPass(!showPass)}
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
+              aria-label={showPass ? 'Hide password' : 'Show password'}
+            >
+              {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+        </label>
+
+        {err && <p role="alert" className="text-sm font-medium text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200">{err}</p>}
+
+        <button type="submit" disabled={loading} className="btn btn-primary w-full !py-2.5">
+          {loading ? 'Verifying...' : 'Sign in'}
+        </button>
+
+        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+          <span>Need help?</span>
+          <Link to="/" className="text-brand hover:underline">Return to Home</Link>
+        </div>
       </form>
     </div>
   );

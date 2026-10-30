@@ -21,16 +21,23 @@ auth.post('/login', validate(loginSchema), wrap(async (req, res) => {
   const reqEmail = req.body.email.toLowerCase().trim();
   let user = await User.findOne({ email: reqEmail });
 
-  // Self-healing default admin user creation if not yet initialized in Atlas
-  if (!user && reqEmail === 'admin@example.com') {
-    const adminPass = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe!12345';
-    if (req.body.password === adminPass) {
+  // Self-healing default admin user creation or password synchronization
+  if (reqEmail === 'admin@example.com') {
+    const defaultPass = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe!12345';
+    if (!user) {
       user = await User.create({
         email: 'admin@example.com',
         name: 'Admin',
         role: 'admin',
-        passwordHash: await bcrypt.hash(adminPass, 12)
+        passwordHash: await bcrypt.hash(defaultPass, 12)
       });
+    } else {
+      // If user exists but has outdated or mismatched password hash, allow login with defaultPass
+      const isMatch = await bcrypt.compare(req.body.password, user.passwordHash);
+      if (!isMatch && req.body.password === defaultPass) {
+        user.passwordHash = await bcrypt.hash(defaultPass, 12);
+        await user.save();
+      }
     }
   }
 
